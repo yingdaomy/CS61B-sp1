@@ -47,7 +47,7 @@ public class TestUpOnly extends TestUtils {
                 {0, 0, 4, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
-                {0, 0, 0, 0},
+        {0, 0, 0, 0},
         };
 
         updateModel(before, 0, 0, false);
