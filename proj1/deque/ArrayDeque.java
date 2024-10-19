@@ -97,6 +97,6 @@ public class ArrayDeque<Type> {
     }
 
     public Type get(int index) {
-        return data[(front + data.length + index) % data.length];
+        return data[(front + data.length + index + 1) % data.length];
     }
 }
