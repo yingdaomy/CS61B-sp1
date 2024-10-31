@@ -115,34 +115,71 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+//        for (int col = 0; col < board.size(); col += 1) {
+//
+//            int[] ifCanMerge = new int[board.size()];
+//            Arrays.fill(ifCanMerge, 1);
+//            for (int row = board.size() - 2; row >= 0; row -= 1) {
+//                Tile t = board.tile(col, row);
+//                if (t == null) {
+//                    continue;
+//                }
+//                int i = 1;
+//                while (board.tile(col, row + i) == null && row + i < board.size() - 1) {
+//                    i += 1;
+//                }
+//                if (board.tile(col, row + i) == null) {
+//                    board.move(col, row + i, t);
+//                    changed = true;
+//                } else if (board.tile(col, row + i).value() == t.value() && ifCanMerge[row + i] == 1) {
+//                    board.move(col, row + i, t);
+//                    score += board.tile(col, row + i).value();
+//                    ifCanMerge[row + i] = 0;
+//                    changed = true;
+//                } else {
+//                    if (row + i - 1 != 0) {
+//                        board.move(col, row + i - 1, t);
+//                        changed = true;
+//                    }
+//                }
+//            }
         for (int col = 0; col < board.size(); col += 1) {
-            int[] ifCanMerge = new int[board.size()];
-            Arrays.fill(ifCanMerge, 1);
+            boolean[] tile_change = new boolean[]{true, true, true, true};
             for (int row = board.size() - 2; row >= 0; row -= 1) {
                 Tile t = board.tile(col, row);
                 if (t == null) {
                     continue;
-                }
-                int i = 1;
-                while (board.tile(col, row + i) == null && row + i < board.size() - 1) {
-                    i += 1;
-                }
-                if (board.tile(col, row + i) == null) {
-                    board.move(col, row + i, t);
-                    changed = true;
-                } else if (board.tile(col, row + i).value() == t.value() && ifCanMerge[row + i] == 1) {
-                    board.move(col, row + i, t);
-                    score += board.tile(col, row + i).value();
-                    ifCanMerge[row + i] = 0;
-                    changed = true;
                 } else {
-                    if (row + i - 1 != 0) {
-                        board.move(col, row + i - 1, t);
+                    int i = 1;
+                    while (row + i < board.size() - 1) {
+                        if (board.tile(col, row + i) != null) {
+                            break;
+                        }
+                        i += 1;
+                    }
+                    if (board.tile(col, row + i) == null) {
+                        board.move(col, row + i, t);
                         changed = true;
+                    } else {
+                        if (board.tile(col, row + i).value() == t.value()) {
+                            if (tile_change[row + i]) {
+                                board.move(col, row + i, t);
+                                score += t.value() * 2;
+                                tile_change[row + i] = false;
+                                changed = true;
+                            } else {
+                                board.move(col, row + i - 1, t);
+                                changed = true;
+                            }
+                        } else {
+                            if (row + i - 1 == row) {
+                                continue;
+                            }
+                            board.move(col, row + i - 1, t);
+                            changed = true;
+                        }
                     }
                 }
-
-
             }
         }
 
@@ -209,29 +246,49 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
-        for (int row = 0; row < b.size(); row += 1) {
+//        for (int row = 0; row < b.size(); row += 1) {
+//            for (int col = 0; col < b.size(); col += 1) {
+//                if (b.tile(col, row) == null) {
+//                    return true;
+//                }
+//            }
+//        }
+//        int[] delrow = new int[]{0, -1, 0, 1};
+//        int[] delcol = new int[]{-1, 0, 1, 0};
+//        for (int row = 0; row < b.size(); row += 1) {
+//            for (int col = 0; col < b.size(); col += 1) {
+//                for (int i = 0; i < 4; i += 1) {
+//                    if (col + delcol[i] < 0 || col + delcol[i] >= b.size() || row + delrow[i] < 0
+//                        || row + delrow[i] >= b.size()) {
+//                        continue;
+//                    }
+//                    if (b.tile(col + delcol[i], row + delrow[i]).value() == b.tile(col, row).value()) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
+//        return false;
+        if (emptySpaceExists(b)) {
+            return true;
+        } else {
+            int[] delrow = new int[]{0, 1, 0, -1};
+            int[] delcol = new int[]{-1, 0, 1, 0};
             for (int col = 0; col < b.size(); col += 1) {
-                if (b.tile(col, row) == null) {
-                    return true;
+                for (int row = 0; row < b.size(); row += 1) {
+                    for (int i = 0; i < 4; i += 1) {
+                        if (col + delcol[i] < 0 || col + delcol[i] >= b.size() || row + delrow[i] < 0 || row + delrow[i] >= b.size()) {
+                            continue;
+                        } else {
+                            if (b.tile(col, row).value() == b.tile(col + delcol[i], row + delrow[i]).value()) {
+                                return true;
+                            }
+                        }
+                    }
                 }
             }
+            return false;
         }
-        int[] delrow = new int[]{0, -1, 0, 1};
-        int[] delcol = new int[]{-1, 0, 1, 0};
-        for (int row = 0; row < b.size(); row += 1) {
-            for (int col = 0; col < b.size(); col += 1) {
-                for (int i = 0; i < 4; i += 1) {
-                    if (col + delcol[i] < 0 || col + delcol[i] >= b.size() || row + delrow[i] < 0
-                        || row + delrow[i] >= b.size()) {
-                        continue;
-                    }
-                    if (b.tile(col + delcol[i], row + delrow[i]).value() == b.tile(col, row).value()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
 
