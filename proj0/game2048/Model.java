@@ -168,6 +168,9 @@ public class Model extends Observable {
                                 tile_change[row + i] = false;
                                 changed = true;
                             } else {
+                                if (row + i - 1 == row) {
+                                    continue;
+                                }
                                 board.move(col, row + i - 1, t);
                                 changed = true;
                             }
