@@ -3,104 +3,99 @@ package deque;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** performs the basic function of ArrayDeque */
 public class ArrayDequeTest {
 
+    /**
+     * Add items into an ArrayDeque and check if they are added correctly.
+     */
     @Test
-    public void addIsEmptyTestSize() {
+    public void AddFirstLastTest() {
 
-        ArrayDeque<String> ad1 = new ArrayDeque<>();
-        assertTrue("A newly initialized ALDeque should be empty", ad1.isEmpty());
-        ad1.addFirst("front");
-        assertFalse("Now the ALDeque should contain 1 item", ad1.isEmpty());
-        assertEquals(1, ad1.size());
-        ad1.addLast("middle");
-        assertEquals(2, ad1.size());
-        ad1.addLast("back");
-        assertEquals(3, ad1.size());
-        System.out.println("Printing out deque: ");
-        ad1.printDeque();
-    }
+        ArrayDeque<String> ad = new ArrayDeque<>();
+        ad.addFirst("middle");
+        ad.addFirst("front");
+        ad.addLast("back");
 
-    @Test
-    public void addRemoveTest() {
-
-        ArrayDeque<String> ad2 = new ArrayDeque<>();
-        assertTrue("A newLy initialized ALDeque should be empty", ad2.isEmpty());
-        ad2.addFirst("back");
-        ad2.addFirst("middle");
-        ad2.addFirst("front");
-        assertEquals("front",ad2.removeFirst());
-        assertEquals("back", ad2.removeLast());
-        System.out.println("Printing out deque: ");
-        ad2.printDeque();
-    }
-
-    @Test
-    public void removeEmptyTest() {
-
-
-        ArrayDeque<Integer> ad3 = new ArrayDeque<>();
-        ad3.addFirst(3);
-
-        ad3.removeLast();
-        ad3.removeFirst();
-        ad3.removeLast();
-        ad3.removeFirst();
-
-        int size = ad3.size();
-        String errorMsg = "  Bad size returned when removing from empty deque.\n";
-        errorMsg += "  student size() returned " + size + "\n";
-        errorMsg += "  actual size() returned 0\n";
-
-        assertEquals(errorMsg, 0, size);
-    }
-
-    @Test
-    public void multipleParamTest() {
-
-
-        ArrayDeque<String>  ad1 = new ArrayDeque<String>();
-        ArrayDeque<Double>  ad2 = new ArrayDeque<Double>();
-        ArrayDeque<Boolean> ad3 = new ArrayDeque<Boolean>();
-
-        ad1.addFirst("string");
-        ad2.addFirst(3.14159);
-        ad3.addFirst(true);
-
-        String s = ad1.removeFirst();
-        double d = ad2.removeFirst();
-        boolean b = ad3.removeFirst();
+        assertEquals("front", ad.removeFirst());
+        assertEquals("middle", ad.removeFirst());
+        assertEquals("back", ad.removeFirst());
 
     }
 
+    /**
+     * Add one item into an empty ArrayDeque and check if the isEmpty method and size method are correct.
+     */
     @Test
-    public void emptyNullReturnTest() {
-
-        ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
-
-        boolean passed1 = false;
-        boolean passed2 = false;
-        assertEquals("Should return null when removeFirst is called on an empty Deque,", null, ad1.removeFirst());
-        assertEquals("Should return null when removeLast is called on an empty Deque,", null, ad1.removeLast());
-
+    public void isEmptySizeTest() {
+        ArrayDeque<String> ad = new ArrayDeque<>();
+        assertEquals(true, ad.isEmpty());
+        ad.addLast("middle");
+        ad.addLast("back");
+        ad.addFirst("front");
+        assertEquals(3, ad.size());
+        assertEquals(false, ad.isEmpty());
+        assertEquals("front", ad.removeFirst());
+        assertEquals("back", ad.removeLast());
+        assertEquals("middle", ad.removeFirst());
+        assertEquals(true, ad.isEmpty());
     }
 
+    /**
+     * Test if the removeFirst and removeLast method are correct.
+     */
     @Test
-    public void bigALDequeTest() {
+    public void removeFirstLastTest() {
+        ArrayDeque<String> ad = new ArrayDeque<>();
+        ad.addFirst("front");
+        ad.addLast("middle");
+        ad.addLast("back");
+        assertEquals("front", ad.removeFirst());
+        assertEquals("middle", ad.removeFirst());
+        assertEquals("back", ad.removeLast());
+    }
 
-        ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
-        for (int i = 0; i < 10; i++) {
-            ad1.addLast(i);
+    /**
+     * Test the get method
+     */
+    @Test
+    public void getTest() {
+        ArrayDeque<String> ad = new ArrayDeque<>();
+        ad.addFirst("front");
+        ad.addLast("middle");
+        ad.addLast("back");
+        assertEquals("middle", ad.get(1));
+        assertEquals("front", ad.get(0));
+        assertEquals("back", ad.get(2));
+    }
+
+    /**
+     * Test the printDeque method
+     */
+    @Test
+    public void printDequeTest() {
+        ArrayDeque<String> ad = new ArrayDeque<>();
+        ad.addFirst("front");
+        ad.addLast("middle");
+        ad.addLast("back");
+        ad.printDeque();
+    }
+
+    /** Add large number of elements to deque; check if order is correct. */
+    @Test
+    public void bigArrayDequeTest() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        for (int i = 0; i < 1000000; i += 1) {
+            ad.addLast(i);
+        }
+        for (int i = 0; i < 500000; i++) {
+            assertEquals("Should have the same value", i, (double) ad.removeFirst(), 0.0);
         }
 
-        for (double i = 0; i < 5; i++) {
-            assertEquals("Should have the same value", i, (double) ad1.removeFirst(), 0.0);
+        for (int i = 999999; i > 500000; i--) {
+            assertEquals("Should have the same value", i, (double) ad.removeLast(), 0.0);
         }
-
-        for (double i = 9; i > 5; i--) {
-            assertEquals("Should have the same value", i, (double) ad1.removeLast(), 0.0);
-        }
-
     }
-
 }
+
+

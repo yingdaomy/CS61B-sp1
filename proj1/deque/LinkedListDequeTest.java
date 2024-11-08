@@ -80,6 +80,22 @@ public class LinkedListDequeTest {
     }
 
     @Test
+    /* Check if the getRecursive method is useful **/
+    public void getRecursiveTest() {
+
+        LinkedListDeque<String> lld = new LinkedListDeque<>();
+        lld.addFirst("back");
+        lld.addFirst("middle");
+        lld.addFirst("front");
+
+        assertEquals("front", lld.getRecursive(0));
+        assertEquals("middle", lld.getRecursive(1));
+        assertEquals("back", lld.getRecursive(2));
+        assertEquals(null, lld.getRecursive(3));
+
+    }
+
+    @Test
     /* Check if you can create LinkedListDeques with different parameterized types*/
     public void multipleParamTest() {
 

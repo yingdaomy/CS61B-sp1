@@ -1,102 +1,111 @@
 package deque;
 
-public class ArrayDeque<Type> {
+public class ArrayDeque<T> implements Deque<T> {
 
-    private Type[] data;
+    private int size;
+    private T[] items;
     private int front;
     private int back;
-    private int size;
 
     public ArrayDeque() {
+        items = (T[]) new Object[8];
         front = 0;
-        back = 0;
+        back = 1;
         size = 0;
-        data = (Type[]) new Object[8];
     }
 
     private void resize(int capacity) {
-        Type[] temp = (Type[]) new Object[capacity];
-        int j = 0;
-        for (int i = front; i != back; i = (i + data.length + 1) % data.length, j += 1) {
-            temp[j] = data[i];
+        T[] temp = (T[]) new Object[capacity];
+        int index = 0;
+        for (int i = (front + items.length + 1) % items.length; i != back; i = (i + items.length + 1) % items.length) {
+            temp[index] = items[i];
+            index = index + 1;
         }
-        front = 0;
-        back = j;
-        data = temp;
+        items = temp;
+        back = index;
+        front = items.length - 1;
     }
 
-    public void addFirst(Type item) {
-        if (front == 0) {
-            if (data[0] == null) {
-                back = (back + data.length + 1) % data.length;
-            }
-        }
-        data[front] = item;
-        front = (front + data.length - 1) % data.length;
-        size += 1;
-        if ((float)size / data.length > 0.6) {
-            resize((int)(data.length * 1.5));
+    @Override
+    public void addFirst(T item) {
+        items[front] = item;
+        front = (front + items.length - 1) % items.length;
+        size = size + 1;
+        if (1.0 * size / items.length > 0.75) {
+            resize(size + (int)(size * 0.9));
         }
     }
 
-    public void addLast(Type item) {
-        if (back == 0) {
-            if (data[0] == null) {
-                front = (front + data.length - 1) % data.length;
-            }
-        }
-        data[back] = item;
-        back = (back + data.length + 1) % data.length;
-        size += 1;
-        if ((float)size / data.length > 0.6) {
-            resize((int)(data.length * 1.5));
+    @Override
+    public void addLast(T item) {
+        items[back] = item;
+        back = (back + items.length + 1) % items.length;
+        size = size + 1;
+        if (1.0 * size / items.length > 0.75) {
+            resize(size + (int)(size * 0.9));
         }
     }
 
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public void printDeque() {
-        for (int i = front; i != back + 1; i = (i + data.length + 1) % data.length) {
-            System.out.print(data[i] + " ");
+        int index = (front + items.length + 1) % items.length;
+        while (index != back) {
+            System.out.print(items[index] + " ");
+            index = (index + items.length + 1) % items.length;
         }
         System.out.println();
     }
 
-    public Type removeFirst() {
-        if (isEmpty()) {
+    @Override
+    public T removeFirst() {
+        if (size == 0) {
             return null;
         }
-        Type result = data[(front + data.length + 1) % data.length];
-        data[(front + data.length + 1) % data.length] = null;
-        front = (front + data.length + 1) % data.length;
+        T result = items[(front + items.length + 1) % items.length];
+        items[(front + items.length + 1) % items.length] = null;
+        front = (front + items.length + 1) % items.length;
         size = size - 1;
-        if (data.length > 50 && (float)size / data.length < 0.25) {
-            resize(size / 2);
+        if (1.0 * size / items.length < 0.25) {
+            resize((int)(items.length * 0.7));
         }
         return result;
     }
 
-    public Type removeLast() {
-        if (isEmpty()) {
+    @Override
+    public T removeLast() {
+        if (size == 0) {
             return null;
         }
-        Type result = data[(back + data.length - 1) % data.length];
-        data[(back + data.length - 1) % data.length] = null;
-        back = (back + data.length - 1) % data.length;
+        T result = items[(back + items.length - 1) % items.length];
+        items[(back + items.length - 1) % items.length] = null;
+        back = (back + items.length - 1) % items.length;
         size = size - 1;
-        if (data.length > 50 && (float)size / data.length < 0.25) {
-            resize(size / 2);
+        if (1.0 * size / items.length < 0.25) {
+            resize((int)(items.length * 0.7));
         }
         return result;
     }
 
-    public Type get(int index) {
-        return data[(front + data.length + index + 1) % data.length];
+    @Override
+    public T get(int index) {
+        if (index < 0 || index >= items.length) {
+            return null;
+        }
+        int i = (front + items.length + 1) % items.length;
+        while (index != 0) {
+            i = (i + items.length + 1) % items.length;
+            index = index - 1;
+        }
+        return items[i];
     }
 }
